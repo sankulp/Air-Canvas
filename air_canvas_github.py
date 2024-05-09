@@ -147,7 +147,7 @@ while ret:
         yellow_index += 1
 
     # Draw lines of all the colors on the canvas and frame
-    points = [bpoints, gpoints, ypoints] # removed r points from here
+    points = [bpoints, gpoints, ypoints] 
     # for j in range(len(points[0])):
     #         for k in range(1, len(points[0][j])):
     #             if points[0][j][k - 1] is None or points[0][j][k] is None:

@@ -1,3 +1,6 @@
+# for adding red color pen to the air canvas make changes where it is specified. 
+
+
 # All the imports go here
 import cv2
 import numpy as np
@@ -8,14 +11,16 @@ from collections import deque
 # Giving different arrays to handle colour points of different colour
 bpoints = [deque(maxlen=1024)]
 gpoints = [deque(maxlen=1024)]
-
 ypoints = [deque(maxlen=1024)]
+# add a similar line for red eg. 
+rpoints = [deque(maxlen=1024)]
 
 
 # These indexes will be used to mark the points in particular arrays of specific colour
 blue_index = 0
 green_index = 0
 yellow_index = 0
+# add a similar line for red index
 
 #The kernel to be used for dilation purpose 
 kernel = np.ones((5,5),np.uint8)
@@ -29,11 +34,14 @@ paintWindow = cv2.rectangle(paintWindow, (40,1), (140,65), (0,0,0), 2)
 paintWindow = cv2.rectangle(paintWindow, (160,1), (255,65), (255,0,0), 2)
 paintWindow = cv2.rectangle(paintWindow, (390,1), (485,65), (0,0,255), 2)
 paintWindow = cv2.rectangle(paintWindow, (505,1), (600,65), (0,255,255), 2)
+paintWindow = cv2.rectangle(paintWindow, (390,1), (485,65), (), ) # complete the command by taking reference from the other similar statements.
 
 cv2.putText(paintWindow, "CLEAR", (49, 33), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2, cv2.LINE_AA)
 cv2.putText(paintWindow, "BLUE", (185, 33), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2, cv2.LINE_AA)
 cv2.putText(paintWindow, "GREEN", (298, 33), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2, cv2.LINE_AA)
 cv2.putText(paintWindow, "YELLOW", (520, 33), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2, cv2.LINE_AA)
+cv2.putText(paintWindow, "RED", (420, 33)) # complete this line by looking at the other statements. 
+
 cv2.namedWindow('Paint', cv2.WINDOW_AUTOSIZE)
 
 
@@ -54,21 +62,22 @@ while ret:
 
     # Flip the frame vertically
     frame = cv2.flip(frame, 1)
-    #hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    
     framergb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     frame = cv2.rectangle(frame, (40,1), (140,65), (0,0,0), 2)
     frame = cv2.rectangle(frame, (160,1), (255,65), (255,0,0), 2)
     frame = cv2.rectangle(frame, (275,1), (370,65), (0,255,0), 2)
-   
     frame = cv2.rectangle(frame, (505,1), (600,65), (0,255,255), 2)
-
+    frame = cv2.rectangle(frame, (390,1), (485,65), (), ) # comlpete this command by taking reference from the previous lines
+     
     cv2.putText(frame, "CLEAR", (49, 33), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2, cv2.LINE_AA)
     cv2.putText(frame, "BLUE", (185, 33), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2, cv2.LINE_AA)
     cv2.putText(frame, "GREEN", (298, 33), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2, cv2.LINE_AA)
-    
     cv2.putText(frame, "YELLOW", (520, 33), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2, cv2.LINE_AA)
-    #frame = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+    cv2.putText(frame, "", (420, 33), ) # complete this line 
+    
+    
 
     # Get hand landmark prediction
     result = hands.process(framergb)
@@ -102,9 +111,10 @@ while ret:
             blue_index += 1
             gpoints.append(deque(maxlen=512))
             green_index += 1
-            
             ypoints.append(deque(maxlen=512))
             yellow_index += 1
+# add a similar statement for red color
+            
 #now we check the position of the finger. if the finger is on any onw button then don't draw but trigger the respective actions 
         elif center[1] <= 65:
             if 40 <= center[0] <= 140: # Clear Button dimensions
@@ -112,10 +122,13 @@ while ret:
                 bpoints = [deque(maxlen=512)]
                 gpoints = [deque(maxlen=512)]
                 ypoints = [deque(maxlen=512)]
+                # add similar command for r points
 
                 blue_index = 0
                 green_index = 0
                 yellow_index = 0
+                # define for red similarly
+                
 # if the finger goes to some other color block then change the colorIndex . 
                 paintWindow[67:,:,:] = 255
             elif 160 <= center[0] <= 255:
@@ -135,6 +148,8 @@ while ret:
                 gpoints[green_index].appendleft(center)
             elif colorIndex == 3:
                 ypoints[yellow_index].appendleft(center)
+# add similar elif condition for red with color index = 2
+    
     # Append the next deques when nothing is detected to avoid messing up
 
     else: # if the hand is not in the frame / not detected ,we don't draw but we keep on adding the real
@@ -145,14 +160,11 @@ while ret:
         green_index += 1
         ypoints.append(deque(maxlen=512))
         yellow_index += 1
-
+# add a similar line for red points
+    
     # Draw lines of all the colors on the canvas and frame
-    points = [bpoints, gpoints, ypoints] 
-    # for j in range(len(points[0])):
-    #         for k in range(1, len(points[0][j])):
-    #             if points[0][j][k - 1] is None or points[0][j][k] is None:
-    #                 continue
-    #             cv2.line(paintWindow, points[0][j][k - 1], points[0][j][k], colors[0], 2)
+    points = [bpoints, gpoints, rpoints, ypoints] 
+    
     for i in range(len(points)):
         for j in range(len(points[i])):
             for k in range(1, len(points[i][j])):
